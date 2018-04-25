@@ -4,11 +4,10 @@ import argparse
 import logging
 import sys
 
-import kafka
-
 log = logging.getLogger(__name__)
 
-def produce():
+def py_produce(address, topic):
+    import kafka
     log.info('connecting to cluster')
     producer = kafka.KafkaProducer(
         bootstrap_servers='172.20.0.2:9092',
@@ -22,10 +21,20 @@ def produce():
         log.info('closing producer')
         producer.close()
 
+def py_consume(address, topic):
+    import kafka
+
+def cf_produce(address, topic):
+    import confluent_kafka as cfkafka
+
+def cf_consume(address, topic):
+    import confluent_kafka as cfkafka
+
 def parse_args(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--produce', action='store_true', default=False)
     parser.add_argument('-c', '--consume', action='store_true', default=False)
+    parser.add_argument('-L', '--library', choices=['py', 'cf'], default='cf')
     return (parser, parser.parse_args(argv))
 
 if __name__ == '__main__':
@@ -33,6 +42,9 @@ if __name__ == '__main__':
     print(args)
 
     logging.basicConfig(level='DEBUG')
+
+    produce = {'py': py_produce, 'cf': cf_produce}[args.library]
+    consume = {'py': py_consume, 'cf': cf_consume}[args.library]
 
     if args.produce:
         produce()
