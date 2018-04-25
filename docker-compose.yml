@@ -4,21 +4,13 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:4.0.0
-    environment: 
+    environment:
       - ZOOKEEPER_CLIENT_PORT=2181
 
   kafka:
-    image: confluentinc/cp-kafka:4.0.0
+    build:
+        context: .
+        dockerfile: Dockerfile.kafka
     environment:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://172.20.0.4:9092
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-      - KAFKA_LOG4J_LOGGER_KAFKA=DEBUG, kafkaAppender
-
-  kafka2:
-    image: confluentinc/cp-kafka:4.0.0
-    environment:
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://172.20.0.2:9092
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-      - KAFKA_LOG4J_LOGGER_KAFKA=DEBUG, kafkaAppender
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2
