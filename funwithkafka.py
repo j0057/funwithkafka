@@ -9,14 +9,11 @@ log = logging.getLogger(__name__)
 def py_produce(address, topic):
     import kafka
     log.info('connecting to cluster')
-    producer = kafka.KafkaProducer(
-        bootstrap_servers='172.20.0.2:9092',
-        batch_size=0,
-        linger_ms=0)
+    producer = kafka.KafkaProducer(bootstrap_servers=address, batch_size=0, linger_ms=0)
     try:
         for x in range(100):
             log.info('publishing value %d', x)
-            producer.send(b'foo', key=b'foo', value=str(x).encode('utf8'))
+            producer.send(topic.encode('utf8'), key=b'foo', value=str(x).encode('utf8'))
     finally:
         log.info('closing producer')
         producer.close()
@@ -34,7 +31,9 @@ def parse_args(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--produce', action='store_true', default=False)
     parser.add_argument('-c', '--consume', action='store_true', default=False)
+    parser.add_argument('-a', '--address', default='172.20.0.3:9092')
     parser.add_argument('-L', '--library', choices=['py', 'cf'], default='cf')
+    parser.add_argument('-t', '--topic', default='foo')
     return (parser, parser.parse_args(argv))
 
 if __name__ == '__main__':
@@ -47,9 +46,9 @@ if __name__ == '__main__':
     consume = {'py': py_consume, 'cf': cf_consume}[args.library]
 
     if args.produce:
-        produce()
+        produce(args.address, args.topic)
     elif args.consume:
-        consume()
+        consume(args.address, args.topic)
     else:
         parser.print_help()
         sys.exit(1)
