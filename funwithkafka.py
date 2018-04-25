@@ -23,6 +23,16 @@ def py_consume(address, topic):
 
 def cf_produce(address, topic):
     import confluent_kafka as cfkafka
+    def ack(err, msg):
+        if err:
+            log.info('error producing %r=%r to topic %s: %s', msg.key(), msg.value(), msg.topic(), err)
+        else:
+            log.info('produced %r=%r to topic %s', msg.key(), msg.value(), msg.topic())
+    producer = cfkafka.Producer({'bootstrap.servers': address})
+    for x in range(100):
+        producer.produce(topic, key=b'foo', value=str(x).encode('utf8'), callback=ack)
+        producer.poll(0.5)
+    producer.flush(30)
 
 def cf_consume(address, topic):
     import confluent_kafka as cfkafka
