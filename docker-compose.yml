@@ -20,3 +20,14 @@ services:
         environment:
             - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
             - KAFKA_REST_HOST_NAME=rest_proxy
+
+    control_center:
+        image: confluentinc/cp-control-center
+        environment:
+            - CONTROL_CENTER_ZOOKEEPER_CONNECT=zookeeper:2181
+            - CONTROL_CENTER_REPLICATION_FACTOR=1
+            - CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS=1
+            - CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS=1
+            - CONTROL_CENTER_STREAMS_NUM_STREAM_THREADS=2
+        ports:
+            - 38000:9021
