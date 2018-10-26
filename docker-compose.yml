@@ -14,3 +14,9 @@ services:
         environment:
             - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
             - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2
+
+    rest_proxy:
+        image: confluentinc/cp-kafka-rest
+        environment:
+            - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
+            - KAFKA_REST_HOST_NAME=rest_proxy
