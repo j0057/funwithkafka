@@ -33,7 +33,7 @@ services:
         ports:
             - 38000:9021
 
-    ui:
+    topics_ui:
         image: landoop/kafka-topics-ui
         environment:
             KAFKA_REST_PROXY_URL: http://rest_proxy:8082/
